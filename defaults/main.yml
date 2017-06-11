@@ -1,0 +1,5 @@
+---
+# defaults file for sftp
+#
+sftp_user_name: cassiaftp
+sftp_user_password: 'cambiami'

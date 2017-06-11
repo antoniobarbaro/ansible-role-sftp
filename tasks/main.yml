@@ -1,0 +1,60 @@
+---
+# tasks file for sftp
+- name: create sftproot directory
+  file:
+    path: /sftproot
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create cassia-alerts directory
+  file:
+    path: /sftproot/cassia-alerts
+    state: directory
+    owner: ossec
+    group: ossec
+    mode: 0440
+
+- name: create cassiaftp user
+  user:
+    name: '{{ sftp_user_name }}'
+    password: '{{ sftp_user_password }}'
+    shell: /sbin/nologin
+    group: ossec
+    createhome: no
+    update_password: always
+
+- name: modify sshd config file
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Subsystem'
+    line: 'Subsystem sftp internal-sftp' 
+  notify: restart sshd      
+
+- name: modify sshd config file
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Match Group'
+    line: 'Match Group ossec'
+    insertafter: '^Subsystem'
+    state: present   
+  notify: restart sshd      
+
+- name: modify sshd config file
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChrootDirectory'
+    line: 'ChrootDirectory /sftproot'
+    insertafter: '^Match Group'
+    state: present    
+  notify: restart sshd      
+
+- name: modify sshd config file
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ForceCommand'
+    line: 'ForceCommand internal-sftp'
+    insertafter: '^ChrootDirectory'
+    state: present 
+  notify: restart sshd      

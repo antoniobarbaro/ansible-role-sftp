@@ -1,0 +1,8 @@
+---
+# handlers file for ossec-wazuh
+
+- name: restart sshd
+  service: name=sshd
+           state=restarted
+
+
