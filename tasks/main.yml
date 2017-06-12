@@ -57,4 +57,12 @@
     line: 'ForceCommand internal-sftp'
     insertafter: '^ChrootDirectory'
     state: present 
-  notify: restart sshd      
+  notify: restart sshd    
+
+- name: Mount bind ossec alerts folder
+  mount:
+    path: /sftproot/cassia-alerts
+    src: /var/ossec/logs/alerts
+    opts: bind
+    state: mounted 
+    fstype: none 
