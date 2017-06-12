@@ -8,20 +8,12 @@
     group: root
     mode: 0755
 
-- name: create cassia-alerts directory
-  file:
-    path: /sftproot/cassia-alerts
-    state: directory
-    owner: ossec
-    group: ossec
-    mode: 0440
-
-- name: create cassiaftp user
+- name: create sftp user
   user:
     name: '{{ sftp_user_name }}'
     password: '{{ sftp_user_password | password_hash("sha512") }}'
     shell: /sbin/nologin
-    group: ossec
+    group: '{{ sftp_user_group }}'
     createhome: no
     update_password: always
 
@@ -36,7 +28,7 @@
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^Match Group'
-    line: 'Match Group ossec'
+    line: 'Match Group {{ sftp_user_group }}'
     insertafter: '^Subsystem'
     state: present   
   notify: restart sshd      
@@ -59,10 +51,19 @@
     state: present 
   notify: restart sshd    
 
-- name: Mount bind ossec alerts folder
+# Cassia tasks
+- name: create cassia-alerts directory
+  file:
+    path: /sftproot/cassia-alerts
+    state: directory
+    owner: ossec
+    group: ossec
+    mode: 0550
+
+- name: Mount bind cassia alerts folder
   mount:
     path: /sftproot/cassia-alerts
     src: /var/ossec/logs/alerts
     opts: bind
     state: mounted 
-    fstype: none 
+    fstype: none  

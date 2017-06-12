@@ -3,3 +3,4 @@
 #
 sftp_user_name: cassiaftp
 sftp_user_password: 'cambiami'
+sftp_user_group: ossec
