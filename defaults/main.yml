@@ -1,6 +1,6 @@
 ---
 # defaults file for sftp
 #
-sftp_user_name: cassiaftp
+sftp_user_name: cassia
 sftp_user_password: 'cambiami'
 sftp_user_group: ossec
