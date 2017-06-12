@@ -19,7 +19,7 @@
 - name: create cassiaftp user
   user:
     name: '{{ sftp_user_name }}'
-    password: '{{ sftp_user_password }}'
+    password: '{{ sftp_user_password | password_hash("sha512") }}'
     shell: /sbin/nologin
     group: ossec
     createhome: no
