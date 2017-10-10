@@ -4,3 +4,5 @@
 sftp_user_name: cassia
 sftp_user_password: 'cambiami'
 sftp_user_group: ossec
+sftp_dir: '/sftproot'
+sftp_mount_cassia_alerts: false

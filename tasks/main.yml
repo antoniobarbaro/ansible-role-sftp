@@ -2,7 +2,7 @@
 # tasks file for sftp
 - name: create sftproot directory
   file:
-    path: /sftproot
+    path: '{{ sftp_dir }}'
     state: directory
     owner: root
     group: root
@@ -33,11 +33,11 @@
     state: present   
   notify: restart sshd      
 
-- name: modify sshd config file
+- name: modify sshd config file chrootdir
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^ChrootDirectory'
-    line: 'ChrootDirectory /sftproot'
+    line: 'ChrootDirectory {{ sftp_dir }}'
     insertafter: '^Match Group'
     state: present    
   notify: restart sshd      
@@ -58,12 +58,14 @@
     state: directory
     owner: ossec
     group: ossec
-    mode: 0550
+    mode: 0770
+  when: sftp_mount_cassia_alerts
 
-- name: Mount bind cassia alerts folder
+- name: Mount bind read only cassia alerts folder
   mount:
     path: /sftproot/cassia-alerts
     src: /var/ossec/logs/alerts
-    opts: bind
+    opts: "bind,ro"
     state: mounted 
     fstype: none  
+  when: sftp_mount_cassia_alerts    
