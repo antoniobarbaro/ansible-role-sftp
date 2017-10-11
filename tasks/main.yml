@@ -17,6 +17,14 @@
     createhome: no
     update_password: always
 
+- name: modify sshd config file enable password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+    state: present   
+  notify: restart sshd      
+
 - name: modify sshd config file
   lineinfile:
     path: /etc/ssh/sshd_config
@@ -24,23 +32,14 @@
     line: 'Subsystem sftp internal-sftp' 
   notify: restart sshd      
 
-
-- name: modify sshd config file PasswordAuthentication
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PasswordAuthentication'
-    line: 'PasswordAuthentication yes'
-    insertafter: '^Subsystem'
-    state: present   
-  notify: restart sshd      
-
-
+# questa parte deve essere messa in fondo al file perche' tutto quello che e' sotto match group ha una sua configurazione specifica, come se fosse tra graffe
+# per chiudere il match di solito si usa l'istruzione Match all
 - name: modify sshd config file
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^Match Group'
     line: 'Match Group {{ sftp_user_group }}'
-    insertafter: '^PasswordAuthentication'
+    insertafter: EOF
     state: present   
   notify: restart sshd      
 
@@ -49,7 +48,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^ChrootDirectory'
     line: 'ChrootDirectory {{ sftp_dir }}'
-    insertafter: '^Match Group'
+    insertafter: '^Match Group {{ sftp_user_group }}'
     state: present    
   notify: restart sshd      
 
@@ -58,7 +57,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^ForceCommand'
     line: 'ForceCommand internal-sftp'
-    insertafter: '^ChrootDirectory'
+    insertafter: '^ChrootDirectory {{ sftp_dir }}'
     state: present 
   notify: restart sshd    
 
