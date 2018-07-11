@@ -64,7 +64,7 @@
 # Cassia tasks
 - name: create cassia-alerts directory
   file:
-    path: /sftproot/cassia-alerts
+    path: '{{ sftp_dir }}/cassia-alerts'
     state: directory
     owner: ossec
     group: ossec
@@ -73,7 +73,7 @@
 
 - name: Mount bind read only cassia alerts folder
   mount:
-    path: /sftproot/cassia-alerts
+    path: '{{ sftp_dir }}/cassia-alerts'
     src: /var/ossec/logs/alerts
     opts: "bind,ro"
     state: mounted 
